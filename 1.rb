@@ -9,19 +9,24 @@ end
 puts "Load input from #{input_path}"
 
 input = File.read(input_path).split("\n").map(&:strip)
-parsed = input.map do |line|
-  match = /mem\[(.*)\] = (.*)/.match(line)
-  [match[1], match[2]]
+parsed = input.map(&:to_i)
+
+# take its mass, divide by three, round down, and subtract 2.
+def fuel(mass)
+  f = (mass.to_i / 3).to_i - 2
+  f <= 0 ? 0 : f
 end
 
-n = input.size
-ans = 0
-
-input.each_with_index do |line, i|
+def rec(mass)
+  sum = 0
+  loop do
+    f = fuel(mass)
+    return sum if f == 0
+    sum += f
+    mass = f
+  end
 end
 
-(0...n).each do |i|
-  input[i]
-end
+ans = parsed.map { |p| rec(p) }.sum
 
 puts(ans)
